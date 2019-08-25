@@ -1,8 +1,8 @@
 <!--  -->
 <template>
-<div class="goods-item">
-    <a :href="goodsItem.link">
-        <img :src="goodsItem.show.img" alt="mm">
+<div class="goods-item" @click="itemClick">
+    <!-- <a :href="goodsItem.link"> -->
+        <img :src="goodsItem.show.img" alt="mm" @load="imgLoad">
         <div class="detail">
             <p class="titles" :title="goodsItem.title">{{goodsItem.title}}</p>
             <div class="price">
@@ -11,7 +11,7 @@
                 <span><span class="red">❤</span>{{goodsItem.cfav}}</span>
             </div>
         </div>
-    </a>
+    <!-- </a> -->
     </div>
 </template>
 
@@ -38,7 +38,15 @@ computed: {},
 //监控data中的数据变化
 watch: {},
 //方法集合
-methods: {},
+methods: {
+    imgLoad(){
+        this.$bus.$emit('imgLoad')
+    },
+    itemClick(){
+        console.log('商品item被点击')
+        this.$router.push('/detail/'+ this.goodsItem.iid)
+    }
+},
 //生命周期 - 创建完成（可以访问当前this实例）
 created() {},
 //生命周期 - 挂载完成（可以访问DOM元素）
@@ -58,9 +66,9 @@ activated() {}, //如果页面有keep-alive缓存功能，这个函数会触发
         margin-bottom: 4px;
         
     }
-    a{
+    /* a{
         display: block;
-    }
+    } */
     .pred{
         color:#ff5777;
         font-size: 14px;
@@ -88,8 +96,8 @@ activated() {}, //如果页面有keep-alive缓存功能，这个函数会触发
     img{
         width: 100%;
         border-radius: 3px;
-        height: 90%;
-        min-height: 280px;
+        /* height: 90%; */
+        min-height: 258px;
         box-shadow: 0 2px 2px 2px #ccc;
     }
     .price{

@@ -57,9 +57,10 @@ activated() {}, //如果页面有keep-alive缓存功能，这个函数会触发
 </script>
 <style scoped>
 .tab-c{
-    margin-top: 8px;
+    /* margin-top: 8px; */
     display: flex;
     justify-content:space-evenly;
+    background-color: #fff;
 }
 .tab-item{
     flex: 1;

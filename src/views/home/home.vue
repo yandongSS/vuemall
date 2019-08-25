@@ -1,23 +1,35 @@
 <!--  -->
 <template>
 <div class='home'>
+  
     <nav-bar class="home-nav"><div slot="center">购物街</div></nav-bar>
-    <scroll class="content" ref="scroll">
+    <tab-control :titles="['流行','精选','韩流']" 
+                 class="tab-control tab-c" 
+                 @tabClick="tabClick" 
+                 ref="tabControl1"
+                 v-show="isTabcontrolFixed"></tab-control>
+    <scroll class="content" ref="scroll" 
+                            :probe-type="3" 
+                            :pull-up-load="true" 
+                            @scroll="scrollClick"
+                            @pullingUp="loadMore">
     <swiper>
         <swiper-item v-for="(item,index) in banners" :key="index">
-            <a :href="item.link"><img :src="item.image" alt=""></a>
+            <a :href="item.link"><img :src="item.image" alt="" @load="swiperImgLoad"></a>
         </swiper-item>
     </swiper>
     <recommend-view :recommends="recommends"/>
     <week class="week"/>
     <tab-control :titles="['流行','精选','韩流']" 
                  class="tab-c" 
-                 @tabClick="tabClick"></tab-control>
+                 @tabClick="tabClick" 
+                 ref="tabControl"
+                 ></tab-control>
     <goods-list :goods="goods[type].list"></goods-list>
     
     </scroll>
-    <back-top class="back" @click.native="backClick"></back-top>
- 
+    <back-top class="back" @click.native="backClick" v-show="isShow"></back-top>
+
 </div>
 </template>
 
@@ -36,6 +48,7 @@ import tabControl from 'components/common/tabControl/tabControl'
 import goodsList from 'components/content/goods/goodsList'
 import scroll from 'components/common/BScroll/scroll'
 import backTop from 'components/content/backTop/backTop'
+import { timingSafeEqual } from 'crypto';
 
 const types=['pop','new','sell']
 export default {
@@ -62,7 +75,12 @@ return {
             'new':{page:0,list:[]},
             'sell':{page:0,list:[]}
         },
-        type:'pop'
+        type:'pop',
+        isShow:false,
+        swiperIsLoad:false,
+        tabOffsetTop:0,
+        isTabcontrolFixed:false,
+        saveY:0
         
 }
 },
@@ -72,12 +90,32 @@ computed: {},
 watch: {},
 //方法集合
 methods: {
+        swiperImgLoad(){
+            
+            if(!this.swiperIsLoad){
+                // console.log('-----')
+                // console.log(this.$refs.tabControl.$el.offsetTop)
+                this.tabOffsetTop=this.$refs.tabControl.$el.offsetTop
+                this.swiperIsLoad=true
+            }
+        },
+        scrollClick(position){
+            // console.log(position)
+            if((-position.y)>800){
+                this.isShow=true
+            }else{
+                this.isShow=false
+            }
+            this.isTabcontrolFixed=(-position.y)>this.tabOffsetTop
+        },
         backClick(){
-            this.$refs.scroll.scroll.scrollTo(0,0,800)
+            this.$refs.scroll.scroll.scrollTo(0,0,700)
         },
         tabClick(index){
             this.type=types[index]
             console.log(this.type)
+            this.$refs.tabControl.current=index
+            this.$refs.tabControl1.current=index
         },
         _getHomeMultidata(){
             getHomeMultidata().then(res=>{
@@ -92,7 +130,12 @@ methods: {
                 console.log(res)
                 this.goods[type].list.push(...res.data.list)
                 this.goods[type].page+=1
+                //上拉加载更多
+                this.$refs.scroll.finishPullUp()
             })
+        },
+        loadMore(){
+            this._getHomeGoods(this.type)
         }
 },
 //生命周期 - 创建完成（可以访问当前this实例）
@@ -101,18 +144,25 @@ created() {
        this._getHomeGoods('pop')
        this._getHomeGoods('new')
        this._getHomeGoods('sell')
+      
 },
 //生命周期 - 挂载完成（可以访问DOM元素）
 mounted() {
-
+        this.$bus.$on('imgLoad',()=>{
+           console.log("总线OK")
+        this.$refs.scroll.scroll.refresh()
+       })
 },
-beforeCreate() {}, //生命周期 - 创建之前
-beforeMount() {}, //生命周期 - 挂载之前
-beforeUpdate() {}, //生命周期 - 更新之前
-updated() {}, //生命周期 - 更新之后
-beforeDestroy() {}, //生命周期 - 销毁之前
-destroyed() {}, //生命周期 - 销毁完成
-activated() {}, //如果页面有keep-alive缓存功能，这个函数会触发
+ //生命周期 - 销毁完成
+activated(){
+    this.$refs.scroll.scroll.scrollTo(0,this.saveY,0);
+    //console.log(this.saveY)
+    this.$refs.scroll.scroll.refresh()
+}, 
+deactivated(){
+    this.saveY=this.$refs.scroll.getScrollY()
+    //console.log(this.saveY)
+},
 }
 </script>
 <style scoped>
@@ -124,12 +174,12 @@ activated() {}, //如果页面有keep-alive缓存功能，这个函数会触发
     background-color: #ff5777;
     color:white;
     font-size: 18px;
-    position:fixed;
+    /* position:fixed;
     left:0;
     right: 0;
     top:0;
     z-index: 99;
-    width: 100%;
+    width: 100%; */
 }
 .home{
     /* padding-top: 44px; */
@@ -137,11 +187,15 @@ activated() {}, //如果页面有keep-alive缓存功能，这个函数会触发
     width: 100%;
     position: relative;
 }
-.tab-c{
+.tab-control{
+    position: relative;
+    z-index: 99;
+}
+/* .tab-c{
     position: sticky;
     top:40px;
     background-color:white;
-}
+} */
 .content{
     /* height: 400px; */
     overflow: hidden;
@@ -154,5 +208,11 @@ activated() {}, //如果页面有keep-alive缓存功能，这个函数会触发
     /* background-color: #ff5777; */
 
 }
+/* .fixed{
+    position:fixed;
+    top:44px;
+    left:0;
+    right: 0;
+} */
 
 </style>
