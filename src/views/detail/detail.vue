@@ -1,28 +1,40 @@
 <!--  -->
 <template>
 <div class='detail'>
-    <detail-nav-bar></detail-nav-bar>
+    <detail-nav-bar class="nav"></detail-nav-bar>
+    <scroll class="content">
     <detail-swiper :top-images="topImages"></detail-swiper>
+    <detail-base-info :goods="goods"></detail-base-info>
+    <detail-shop-info :shop="shop"></detail-shop-info>
+    </scroll>
 </div>
 </template>
 
 <script>
 import detailNavBar from './detailComp/detailNavBar'
 import detailSwiper from './detailComp/detailSwiper'
+import detailBaseInfo from './detailComp/detailBaseInfo'
+import detailShopInfo from './detailComp/detailShopInfo'
+import scroll from 'components/common/BScroll/scroll'
 
-import {getDetailData}  from 'network/detail'
+import {getDetailData,Goods,Shop}  from 'network/detail'
 export default {
     name:'detail',
 //import引入的组件需要注入到对象中才能使用
 components: {
     detailNavBar,
-    detailSwiper
+    detailSwiper,
+    detailBaseInfo,
+    detailShopInfo,
+    scroll
 },
 data() {
 //这里存放数据
 return {
     iid:null,
-    topImages:[]
+    topImages:[],
+    goods:{},
+    shop:{}
 }
 },
 //监听属性 类似于data概念
@@ -35,8 +47,11 @@ methods: {},
 created() {
     this.iid=this.$route.params.id
     getDetailData(this.iid).then(res=>{
-        // console.log(res.result.itemInfo.topImages);
+        console.log(res.result);
      this.topImages= res.result.itemInfo.topImages  
+     const data=res.result
+     this.goods=new Goods(data.itemInfo,data.columns,data.shopInfo)
+     this.shop=new Shop(data.shopInfo)
     })
 },
 //生命周期 - 挂载完成（可以访问DOM元素）
@@ -51,5 +66,18 @@ activated() {}, //如果页面有keep-alive缓存功能，这个函数会触发
 }
 </script>
 <style scoped>
-
+    .detail{
+        position: relative;
+        height: 100vh;
+        z-index: 2;
+        background-color: #fff;
+    }
+    .content{
+        height: calc(100% - 44px);
+    }
+    .nav{
+        position: relative;
+        z-index: 9;
+        background-color: #fff;
+    }
 </style>

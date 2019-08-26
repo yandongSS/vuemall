@@ -38,7 +38,7 @@ methods: {
         this.currentIndex=index
     },
     back(){
-        this.$router.back()
+        this.$router.push('/home')
     }
 },
 //生命周期 - 创建完成（可以访问当前this实例）

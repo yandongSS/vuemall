@@ -138,6 +138,15 @@ methods: {
             this._getHomeGoods(this.type)
         }
 },
+activated(){
+    this.$refs.scroll.scroll.scrollTo(0,this.saveY,0);
+    //console.log(this.saveY)
+    this.$refs.scroll.scroll.refresh()
+}, 
+deactivated(){
+    this.saveY=this.$refs.scroll.getScrollY()
+    //console.log(this.saveY)
+},
 //生命周期 - 创建完成（可以访问当前this实例）
 created() {
        this._getHomeMultidata()
@@ -152,17 +161,9 @@ mounted() {
            console.log("总线OK")
         this.$refs.scroll.scroll.refresh()
        })
-},
+}
  //生命周期 - 销毁完成
-activated(){
-    this.$refs.scroll.scroll.scrollTo(0,this.saveY,0);
-    //console.log(this.saveY)
-    this.$refs.scroll.scroll.refresh()
-}, 
-deactivated(){
-    this.saveY=this.$refs.scroll.getScrollY()
-    //console.log(this.saveY)
-},
+
 }
 </script>
 <style scoped>
