@@ -2,10 +2,11 @@
 <template>
 <div class='detail'>
     <detail-nav-bar class="nav"></detail-nav-bar>
-    <scroll class="content">
+    <scroll class="content" ref="scroll">
     <detail-swiper :top-images="topImages"></detail-swiper>
     <detail-base-info :goods="goods"></detail-base-info>
     <detail-shop-info :shop="shop"></detail-shop-info>
+    <detail-goods-info :detail-info="detailInfo" @imgLoad="imgLoad"></detail-goods-info>
     </scroll>
 </div>
 </template>
@@ -16,6 +17,7 @@ import detailSwiper from './detailComp/detailSwiper'
 import detailBaseInfo from './detailComp/detailBaseInfo'
 import detailShopInfo from './detailComp/detailShopInfo'
 import scroll from 'components/common/BScroll/scroll'
+import detailGoodsInfo from './detailComp/detailGoodsInfo'
 
 import {getDetailData,Goods,Shop}  from 'network/detail'
 export default {
@@ -26,7 +28,8 @@ components: {
     detailSwiper,
     detailBaseInfo,
     detailShopInfo,
-    scroll
+    scroll,
+    detailGoodsInfo
 },
 data() {
 //这里存放数据
@@ -34,7 +37,8 @@ return {
     iid:null,
     topImages:[],
     goods:{},
-    shop:{}
+    shop:{},
+    detailInfo:{}
 }
 },
 //监听属性 类似于data概念
@@ -42,7 +46,11 @@ computed: {},
 //监控data中的数据变化
 watch: {},
 //方法集合
-methods: {},
+methods: {
+    imgLoad(){
+        this.$refs.scroll.scroll.refresh()
+    }
+},
 //生命周期 - 创建完成（可以访问当前this实例）
 created() {
     this.iid=this.$route.params.id
@@ -52,6 +60,7 @@ created() {
      const data=res.result
      this.goods=new Goods(data.itemInfo,data.columns,data.shopInfo)
      this.shop=new Shop(data.shopInfo)
+     this.detailInfo=data.detailInfo
     })
 },
 //生命周期 - 挂载完成（可以访问DOM元素）

@@ -6,7 +6,7 @@
     </div>
     <div class="infos">
     <div class="sells">
-        <p class="b">{{shop.sells}}</p>
+        <p class="b">{{shop.sells|sellCountFilter}}</p>
         <p class="s">总销量</p>
     </div>
     <div class="all">
@@ -24,28 +24,7 @@
     </div>
     </div>
     <div class="goshop"><a :href="shop.shopURL"><span> 进店逛逛</span></a></div>
-    <ul>
-        <li>1</li>
-        <li>2</li>
-        <li>3</li>
-        <li>4</li>
-        <li>5</li>
-        <li>6</li>
-        <li>7</li>
-        <li>8</li>
-        <li>9</li>
-        <li>10</li>
-        <li>11</li>
-        <li>12</li>
-        <li>13</li>
-        <li>14</li>
-        <li>15</li>
-        <li>16</li>
-        <li>17</li>
-        <li>18</li>
-        <li>19</li>
-        <li>20</li>
-    </ul>
+    
 </div>
 </template>
 
@@ -73,6 +52,12 @@ computed: {},
 watch: {},
 //方法集合
 methods: {},
+filters: {
+      sellCountFilter: function (value) {
+        if (value < 10000) return value;
+        return (value/10000).toFixed(1) + '万'
+      }
+    },
 //生命周期 - 创建完成（可以访问当前this实例）
 created() {},
 //生命周期 - 挂载完成（可以访问DOM元素）

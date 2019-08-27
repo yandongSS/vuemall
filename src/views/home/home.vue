@@ -127,7 +127,7 @@ methods: {
         _getHomeGoods(type){
             const page=this.goods[type].page + 1
             getHomeGoods(type,page).then(res=>{
-                console.log(res)
+                // console.log(res)
                 this.goods[type].list.push(...res.data.list)
                 this.goods[type].page+=1
                 //上拉加载更多
@@ -139,13 +139,13 @@ methods: {
         }
 },
 activated(){
-    this.$refs.scroll.scroll.scrollTo(0,this.saveY,0);
-    //console.log(this.saveY)
+    this.$refs.scroll.scroll.scrollTo(0,this.saveY,700);
+    console.log(this.saveY)
     this.$refs.scroll.scroll.refresh()
 }, 
 deactivated(){
     this.saveY=this.$refs.scroll.getScrollY()
-    //console.log(this.saveY)
+    console.log(this.saveY)
 },
 //生命周期 - 创建完成（可以访问当前this实例）
 created() {
@@ -158,7 +158,7 @@ created() {
 //生命周期 - 挂载完成（可以访问DOM元素）
 mounted() {
         this.$bus.$on('imgLoad',()=>{
-           console.log("总线OK")
+        //    console.log("总线OK")
         this.$refs.scroll.scroll.refresh()
        })
 }
