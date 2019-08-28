@@ -17,7 +17,7 @@ export class Goods{
         this.discount=itemInfo.discountDesc
         this.columns=columns
         this.ser=shopInfo.services
-        
+        this.real=itemInfo.lowNowPrice
     }
 }
 export class Shop{

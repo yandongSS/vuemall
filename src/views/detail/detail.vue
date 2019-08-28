@@ -2,12 +2,14 @@
 <template>
 <div class='detail'>
     <detail-nav-bar class="nav"></detail-nav-bar>
+  
     <scroll class="content" ref="scroll">
     <detail-swiper :top-images="topImages"></detail-swiper>
     <detail-base-info :goods="goods"></detail-base-info>
     <detail-shop-info :shop="shop"></detail-shop-info>
     <detail-goods-info :detail-info="detailInfo" @imgLoad="imgLoad"></detail-goods-info>
     </scroll>
+    <bottom-bar @add="addToCarts"></bottom-bar>
 </div>
 </template>
 
@@ -18,6 +20,7 @@ import detailBaseInfo from './detailComp/detailBaseInfo'
 import detailShopInfo from './detailComp/detailShopInfo'
 import scroll from 'components/common/BScroll/scroll'
 import detailGoodsInfo from './detailComp/detailGoodsInfo'
+import bottomBar from './detailComp/bottomBar'
 
 import {getDetailData,Goods,Shop}  from 'network/detail'
 export default {
@@ -29,7 +32,8 @@ components: {
     detailBaseInfo,
     detailShopInfo,
     scroll,
-    detailGoodsInfo
+    detailGoodsInfo,
+    bottomBar
 },
 data() {
 //这里存放数据
@@ -49,6 +53,17 @@ watch: {},
 methods: {
     imgLoad(){
         this.$refs.scroll.scroll.refresh()
+    },
+    addToCarts(){
+        // console.log('ok')
+        const product={}
+        product.img=this.topImages[0]
+        product.title=this.goods.title
+        product.desc=this.goods.desc
+        product.price=this.goods.real
+        product.iid=this.iid
+        // this.$store.commit('addCart',product)
+        this.$store.dispatch('addCart',product)
     }
 },
 //生命周期 - 创建完成（可以访问当前this实例）
@@ -82,7 +97,7 @@ activated() {}, //如果页面有keep-alive缓存功能，这个函数会触发
         background-color: #fff;
     }
     .content{
-        height: calc(100% - 44px);
+        height: calc(100% - 44px - 58px);
     }
     .nav{
         position: relative;
