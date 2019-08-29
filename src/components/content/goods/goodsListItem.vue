@@ -2,7 +2,7 @@
 <template>
 <div class="goods-item" @click="itemClick">
     <!-- <a :href="goodsItem.link"> -->
-        <img :src="goodsItem.show.img" alt="mm" @load="imgLoad">
+        <img v-lazy="goodsItem.show.img" alt="mm" @load="imgLoad">
         <div class="detail">
             <p class="titles" :title="goodsItem.title">{{goodsItem.title}}</p>
             <div class="price">

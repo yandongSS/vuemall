@@ -63,7 +63,9 @@ methods: {
         product.price=this.goods.real
         product.iid=this.iid
         // this.$store.commit('addCart',product)
-        this.$store.dispatch('addCart',product)
+        this.$store.dispatch('addCart',product).then(res=>{
+            this.$toast.show(res,1500)
+        })
     }
 },
 //生命周期 - 创建完成（可以访问当前this实例）
